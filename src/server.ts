@@ -1,18 +1,10 @@
-import fastify from 'fastify';
-import fastifyJwt from '@fastify/jwt';
-
-import { authRoutes } from './routes/authRoutes';
-
-const server = fastify({ logger: true });
-
-server.register(fastifyJwt, { secret: process.env.SECRET || 'jwt-default-secret' });
-server.register(authRoutes, { prefix: '/auth' });
+import { app } from './app';
 
 const start = async () => {
     try {
-        await server.listen({ port: 3333 });
+        await app.listen({ port: 3333 });
     } catch (err) {
-        server.log.error(err);
+        app.log.error(err);
         process.exit(1);
     }
 };
