@@ -27,13 +27,17 @@ export async function authRoutes(fastify: FastifyInstance) {
         });
 
         if (!user) {
-            return reply.status(401).send({ message: 'Email ou senha inválidos' });
+            return reply
+                .status(401)
+                .send({ message: 'Email ou senha inválidos', data: null });
         }
 
         const isPasswordValid = await verifyPassword(password, user.password);
 
         if (!isPasswordValid) {
-            return reply.status(401).send({ message: 'Email ou senha inválidos' });
+            return reply
+                .status(401)
+                .send({ message: 'Email ou senha inválidos', data: null });
         }
 
         const token = fastify.jwt.sign(
