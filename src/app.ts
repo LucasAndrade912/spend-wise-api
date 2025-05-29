@@ -3,6 +3,7 @@ import fastifyJwt from '@fastify/jwt';
 import cors from '@fastify/cors';
 
 import { authRoutes } from './routes/authRoutes';
+import { accountRoutes } from './routes/accountRoutes';
 
 export const app = fastify({ logger: true });
 
@@ -13,3 +14,4 @@ app.register(cors, {
 });
 app.register(fastifyJwt, { secret: process.env.SECRET || 'jwt-default-secret' });
 app.register(authRoutes, { prefix: '/auth' });
+app.register(accountRoutes);
