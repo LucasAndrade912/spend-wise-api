@@ -30,4 +30,14 @@ export async function accountRoutes(fastify: FastifyInstance) {
             .status(201)
             .send({ message: 'Conta criada com sucesso', data: newAccount });
     });
+
+    fastify.get('/accounts', async (request, reply) => {
+        const accounts = await prismaClient.account.findMany({
+            where: { userId: request.user.id },
+        });
+
+        return reply
+            .status(200)
+            .send({ message: 'Contas listadas com sucesso!', data: accounts });
+    });
 }
