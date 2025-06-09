@@ -19,11 +19,13 @@ model User {
 }
 
 model Account {
-    id     String      @id @default(cuid())
-    user   User        @relation(fields: [userId], references: [id])
-    userId String
-    name   String
-    type   AccountType @default(POUPANCA)
+    id        String      @id @default(cuid())
+    user      User        @relation(fields: [userId], references: [id])
+    userId    String
+    name      String
+    type      AccountType @default(POUPANCA)
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
 }
 
 enum AccountType {
