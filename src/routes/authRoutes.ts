@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { prismaClient } from '../lib/prisma';
 import { hashPassword, verifyPassword } from '../lib/hash';
+import { authenticate } from '../middlewares/auth';
 
 export async function authRoutes(fastify: FastifyInstance) {
     const signInSchema = z.object({
@@ -87,5 +88,26 @@ export async function authRoutes(fastify: FastifyInstance) {
         return reply
             .status(201)
             .send({ message: 'Usuário criado com sucesso', data: { token } });
+    });
+
+    fastify.get('/profile', { preHandler: authenticate }, async (request, reply) => {
+        const user = await prismaClient.user.findUnique({
+            where: { id: request.user.id },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+
+        if (!user) {
+            return reply
+                .status(404)
+                .send({ message: 'Usuário não encontrado', data: null });
+        }
+
+        return reply.status(200).send({ message: 'Perfil do usuário', data: user });
     });
 }
