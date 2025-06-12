@@ -5,6 +5,11 @@ import { prismaClient } from '../lib/prisma';
 import { AccountType } from '../../generated/prisma';
 import { authenticate } from '../middlewares/auth';
 
+interface IQuerystring {
+    page: string;
+    limit: string;
+}
+
 export async function accountRoutes(fastify: FastifyInstance) {
     const accountSchema = z.object({
         name: z.string().min(1, 'Nome é obrigatório'),
@@ -31,9 +36,15 @@ export async function accountRoutes(fastify: FastifyInstance) {
             .send({ message: 'Conta criada com sucesso', data: newAccount });
     });
 
-    fastify.get('/accounts', async (request, reply) => {
+    fastify.get<{ Querystring: IQuerystring }>('/accounts', async (request, reply) => {
+        const page = Number(request.query.page) || 1;
+        const limit = Number(request.query.limit) || 5;
+        const skip = (page - 1) * limit;
+
         const accounts = await prismaClient.account.findMany({
             where: { userId: request.user.id },
+            skip,
+            take: limit,
         });
 
         return reply
