@@ -30,6 +30,6 @@ model Account {
 
 enum AccountType {
     POUPANCA
-    CORRENTO
+    CORRENTE
     SALARIO
 }
