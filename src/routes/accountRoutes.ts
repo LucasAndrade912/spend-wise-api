@@ -40,6 +40,10 @@ export async function accountRoutes(fastify: FastifyInstance) {
         const page = Number(request.query.page) || 1;
         const limit = Number(request.query.limit) || 5;
         const skip = (page - 1) * limit;
+        const total = await prismaClient.account.count({
+            where: { userId: request.user.id },
+        });
+        const totalPages = Math.ceil(total / limit);
 
         const accounts = await prismaClient.account.findMany({
             where: { userId: request.user.id },
@@ -47,8 +51,11 @@ export async function accountRoutes(fastify: FastifyInstance) {
             take: limit,
         });
 
-        return reply
-            .status(200)
-            .send({ message: 'Contas listadas com sucesso!', data: accounts });
+        return reply.status(200).send({
+            message: 'Contas listadas com sucesso!',
+            total,
+            totalPages,
+            data: accounts,
+        });
     });
 }
