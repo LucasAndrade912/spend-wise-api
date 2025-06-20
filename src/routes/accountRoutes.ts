@@ -4,11 +4,7 @@ import { z } from 'zod';
 import { prismaClient } from '../lib/prisma';
 import { AccountType } from '../../generated/prisma';
 import { authenticate } from '../middlewares/auth';
-
-interface IQuerystring {
-    page: string;
-    limit: string;
-}
+import { IQuerystring } from '../types/queryString';
 
 export async function accountRoutes(fastify: FastifyInstance) {
     const accountSchema = z.object({
