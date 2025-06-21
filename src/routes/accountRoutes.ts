@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { prismaClient } from '../lib/prisma';
 import { AccountType } from '../../generated/prisma';
 import { authenticate } from '../middlewares/auth';
-import { IQuerystring } from '../types/queryString';
+import { IQuerystring, IParams } from '../types/requestTypes';
 
 export async function accountRoutes(fastify: FastifyInstance) {
     const accountSchema = z.object({
@@ -52,6 +52,23 @@ export async function accountRoutes(fastify: FastifyInstance) {
             total,
             totalPages,
             data: accounts,
+        });
+    });
+
+    fastify.get<{ Params: IParams }>('/accounts/:id', async (request, reply) => {
+        const accountId = request.params.id;
+
+        const account = await prismaClient.account.findUnique({
+            where: { id: accountId, userId: request.user.id },
+        });
+
+        if (!account) {
+            return reply.status(404).send({ message: 'Conta não encontrada' });
+        }
+
+        return reply.status(200).send({
+            message: 'Conta encontrada com sucesso',
+            data: account,
         });
     });
 }
