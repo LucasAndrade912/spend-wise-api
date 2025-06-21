@@ -66,9 +66,43 @@ export async function accountRoutes(fastify: FastifyInstance) {
             return reply.status(404).send({ message: 'Conta não encontrada' });
         }
 
+        const incomes = await prismaClient.transaction.findMany({
+            where: {
+                accountId: account.id,
+                category: {
+                    is: {
+                        name: 'Entrada',
+                    },
+                },
+            },
+            select: { amount: true },
+        });
+
+        const expenses = await prismaClient.transaction.findMany({
+            where: {
+                accountId: account.id,
+                category: {
+                    is: {
+                        name: 'Saída',
+                    },
+                },
+            },
+            select: { amount: true },
+        });
+
+        const incomesTotal = incomes.reduce((sum, income) => sum + income.amount, 0);
+        const expensesTotal = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+        const balance = incomesTotal - expensesTotal;
+
         return reply.status(200).send({
             message: 'Conta encontrada com sucesso',
-            data: account,
+            data: {
+                ...account,
+                incomes: incomesTotal,
+                expenses: expensesTotal,
+                balance,
+            },
         });
     });
 }
