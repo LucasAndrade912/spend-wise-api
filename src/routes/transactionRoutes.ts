@@ -3,11 +3,7 @@ import { FastifyInstance } from 'fastify';
 
 import { prismaClient } from '../lib/prisma';
 import { authenticate } from '../middlewares/auth';
-import { IQuerystring } from '../types/queryString';
-
-interface IParams {
-    id: string;
-}
+import { IQuerystring, IParams } from '../types/requestTypes';
 
 export async function transactionRoutes(fastify: FastifyInstance) {
     fastify.addHook('onRequest', authenticate);
@@ -50,6 +46,9 @@ export async function transactionRoutes(fastify: FastifyInstance) {
                 orderBy: { createdAt: 'desc' },
                 skip,
                 take: limit,
+                include: {
+                    category: { select: { name: true } },
+                },
             });
 
             const total = await prismaClient.transaction.count({
