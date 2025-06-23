@@ -75,7 +75,7 @@ export async function accountRoutes(fastify: FastifyInstance) {
                     },
                 },
             },
-            select: { amount: true },
+            select: { ammount: true },
         });
 
         const expenses = await prismaClient.transaction.findMany({
@@ -87,11 +87,11 @@ export async function accountRoutes(fastify: FastifyInstance) {
                     },
                 },
             },
-            select: { amount: true },
+            select: { ammount: true },
         });
 
-        const incomesTotal = incomes.reduce((sum, income) => sum + income.amount, 0);
-        const expensesTotal = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+        const incomesTotal = incomes.reduce((sum, income) => sum + income.ammount, 0);
+        const expensesTotal = expenses.reduce((sum, expense) => sum + expense.ammount, 0);
 
         const balance = incomesTotal - expensesTotal;
 

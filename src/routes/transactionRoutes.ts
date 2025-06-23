@@ -15,7 +15,7 @@ export async function transactionRoutes(fastify: FastifyInstance) {
     const transactionSchema = z.object({
         accountId: z.string().cuid('ID de conta inválido'),
         description: z.string().optional(),
-        amount: z.number().min(0, 'Valor deve ser positivo'),
+        ammount: z.number().min(0, 'Valor deve ser positivo'),
         date: z.string().datetime('Data inválida'),
         type: z.enum(['Entrada', 'Saída'], {
             message: 'Tipo de transação inválido',
@@ -66,7 +66,7 @@ export async function transactionRoutes(fastify: FastifyInstance) {
     );
 
     fastify.post('/transactions', async (request, reply) => {
-        const { accountId, description, amount, date, type } = transactionSchema.parse(
+        const { accountId, description, ammount, date, type } = transactionSchema.parse(
             request.body
         );
 
@@ -95,7 +95,7 @@ export async function transactionRoutes(fastify: FastifyInstance) {
             data: {
                 accountId,
                 description,
-                amount,
+                ammount,
                 date: new Date(date),
                 transactionCategoryId: transactionCategory.id,
             },
@@ -161,7 +161,9 @@ export async function transactionRoutes(fastify: FastifyInstance) {
     fastify.put<{ Params: IParams }>('/transactions/:id', async (request, reply) => {
         const transactionId = request.params.id as string;
 
-        const { description, amount, date, type } = transactionSchema.parse(request.body);
+        const { description, ammount, date, type } = transactionSchema.parse(
+            request.body
+        );
 
         const transaction = await prismaClient.transaction.findUnique({
             where: { id: transactionId },
@@ -193,7 +195,7 @@ export async function transactionRoutes(fastify: FastifyInstance) {
             where: { id: transactionId },
             data: {
                 description,
-                amount,
+                ammount,
                 date: new Date(date),
                 transactionCategoryId: transactionCategory.id,
             },

@@ -33,7 +33,7 @@ model Transaction {
     id                    String              @id @default(cuid())
     account               Account             @relation(fields: [accountId], references: [id])
     accountId             String
-    amount                Int
+    ammount               Int
     category              TransactionCategory @relation(fields: [transactionCategoryId], references: [id])
     transactionCategoryId String
     description           String?
