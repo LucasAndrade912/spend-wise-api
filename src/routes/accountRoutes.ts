@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 
+import { AccountType } from '@prisma/client';
 import { prismaClient } from '../lib/prisma';
-import { AccountType } from '../../generated/prisma';
 import { authenticate } from '../middlewares/auth';
 import { IQuerystring, IParams } from '../types/requestTypes';
 
