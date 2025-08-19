@@ -55,6 +55,21 @@ export async function accountRoutes(fastify: FastifyInstance) {
         });
     });
 
+    fastify.get('/accounts/ids', async (request, reply) => {
+        const accounts = await prismaClient.account.findMany({
+            where: { userId: request.user.id },
+            select: {
+                id: true,
+                name: true,
+            },
+        });
+
+        return reply.status(200).send({
+            message: 'Contas listadas com sucesso!',
+            data: accounts,
+        });
+    });
+
     fastify.get<{ Params: IParams }>('/accounts/:id', async (request, reply) => {
         const accountId = request.params.id;
 
